@@ -27,3 +27,7 @@ p {
     height: 300px;
     float: right;
 }
+
+#startText {
+    font-size: large;
+}

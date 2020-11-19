@@ -3,20 +3,24 @@ const color2 = document.getElementById('color2');
 const colorSpan = document.getElementById('colorSpan');
 const scoreSpan = document.getElementById('score');
 const timer = document.getElementById('timer');
+const startText = document.getElementById('startText');
 
 class Game {
+    isGameStarted = 0;
+    
     constructor () {
-        this.init();
+        this.initColors();
     }
 
     init () {
+        clearInterval(this.interval);
         this.score = 0;
         this.initColors();
         this.choose();
-        clearInterval(this.interval);
         this.counter();
         scoreSpan.innerHTML = this.score;
         timer.innerHTML = '0.000';
+        startText.innerHTML = '';
     }
     
     counter () {
@@ -28,11 +32,10 @@ class Game {
             timer.innerHTML = (this.elapsedTime / 1000).toFixed(3);
 
             if (this.elapsedTime <= 0) {
-                clearInterval(this.interval);
+                this.reset();
+                startText.innerHTML = 'Click any color to start!';
                 timer.innerHTML = '0.000';
-                this.init();
                 alert('You lost. Time is out. Your score is: ' + this.score);
-                clearInterval(this.interval);
             }
         }, 10);
     }
@@ -41,11 +44,7 @@ class Game {
         clearInterval(this.interval);
         this.counter();
     }
-
-    endCounter() {
-        clearInterval(this.interval);
-    }
-
+    
     initColors () {
         this.color = Math.random();
         if (this.color < 0.5) {
@@ -77,43 +76,59 @@ class Game {
     }
 
     clickLeft () {
-        if (color1.style.backgroundColor === this.colorStr) {
-            this.score ++;
-            scoreSpan.innerHTML = this.score;
-            this.initColors();
-            this.choose();
-            this.resetCounter();
-        } else {
-            if (this.required === 0) {
-                this.colorStr = "Blue";
-            } else {
-                this.colorStr = "Red";
-            }
-            alert('Game is over. Right color was ' + this.colorStr + '.');
-            this.resetCounter()
+        if (this.isGameStarted === 0) {
+            this.isGameStarted = 1;
             this.init();
-            clearInterval(this.interval);
+        } else {
+            if (color1.style.backgroundColor === this.colorStr) {
+                this.score ++;
+                scoreSpan.innerHTML = this.score;
+                this.initColors();
+                this.choose();
+                this.resetCounter();
+            } else {
+                if (this.required === 0) {
+                    this.colorStr = "Blue";
+                } else {
+                    this.colorStr = "Red";
+                }
+                alert('Game is over. Right color was ' + this.colorStr + '. Your score is ' + this.score );
+                this.reset();
+            }
         }
     }
 
     clickRight () {
-        if (color2.style.backgroundColor === this.colorStr) {
-            this.score ++;
-            scoreSpan.innerHTML = this.score;
-            this.initColors();
-            this.choose();
-            this.resetCounter();
-        } else {
-            if (this.required === 0) {
-                this.colorStr = "Blue";
-            } else {
-                this.colorStr = "Red";
-            }
-            alert('Game is over. Right color was ' + this.colorStr + '.');
-            this.resetCounter();
+        if (this.isGameStarted === 0) {
+            this.isGameStarted = 1;
             this.init();
-            clearInterval(this.interval);
+        } else {
+
+            if (color2.style.backgroundColor === this.colorStr) {
+                this.score ++;
+                scoreSpan.innerHTML = this.score;
+                this.initColors();
+                this.choose();
+                this.resetCounter();
+            } else {
+                if (this.required === 0) {
+                    this.colorStr = "Blue";
+                } else {
+                    this.colorStr = "Red";
+                }
+                alert('Game is over. Right color was ' + this.colorStr + '. Your score is ' + this.score );
+                this.reset();
+            }
         }
+    }
+
+    reset () {
+        this.isGameStarted = 0;
+        this.resetCounter();
+        this.init();
+        clearInterval(this.interval);
+        colorSpan.innerHTML = '';
+        startText.innerHTML = 'Click any color to start!';
     }
 }
 
